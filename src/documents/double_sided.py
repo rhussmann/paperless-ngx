@@ -11,6 +11,7 @@ from pikepdf import Pdf
 
 from documents.consumer import ConsumerError
 from documents.converters import convert_from_tiff_to_pdf
+from documents.data_models import DocumentSource
 from documents.plugins.base import ConsumeTaskPlugin
 from documents.plugins.base import NoCleanupPluginMixin
 from documents.plugins.base import NoSetupPluginMixin
@@ -33,8 +34,11 @@ class CollatePlugin(NoCleanupPluginMixin, NoSetupPluginMixin, ConsumeTaskPlugin)
     def able_to_run(self) -> bool:
         return (
             settings.CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED
-            and settings.CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME
-            in self.input_doc.original_file.parts
+            and (
+                settings.CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME
+                 in self.input_doc.original_file.parts
+                or self.metadata.double_sided
+            )
         )
 
     def run(self) -> Optional[str]:
@@ -115,6 +119,10 @@ class CollatePlugin(NoCleanupPluginMixin, NoSetupPluginMixin, ConsumeTaskPlugin)
                             != settings.CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME
                         ),
                     )
+
+                    if self.input_doc.source == DocumentSource.ApiUpload:
+                        new_file = settings.CONSUMPTION_DIR / f"{old_file.stem}-collated.pdf"
+
                     # If the user didn't create the subdirs yet, do it for them
                     new_file.parent.mkdir(parents=True, exist_ok=True)
                     pdf1.save(new_file)

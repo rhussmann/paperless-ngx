@@ -31,6 +31,7 @@ class DocumentMetadataOverrides:
     change_users: Optional[list[int]] = None
     change_groups: Optional[list[int]] = None
     custom_field_ids: Optional[list[int]] = None
+    double_sided: Optional[bool] = None
 
     def update(self, other: "DocumentMetadataOverrides") -> "DocumentMetadataOverrides":
         """
@@ -50,6 +51,8 @@ class DocumentMetadataOverrides:
             self.storage_path_id = other.storage_path_id
         if other.owner_id is not None:
             self.owner_id = other.owner_id
+        if other.double_sided is not None:
+            self.double_sided = other.double_sided
 
         # merge
         if self.tag_ids is None:

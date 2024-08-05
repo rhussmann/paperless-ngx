@@ -1305,6 +1305,13 @@ class PostDocumentSerializer(serializers.Serializer):
         required=False,
     )
 
+    double_sided = serializers.BooleanField(
+        label="Double sided",
+        required=False,
+        default=False,
+        write_only=True,
+    )
+
     def validate_document(self, document):
         document_data = document.file.read()
         mime_type = magic.from_buffer(document_data, mime=True)
