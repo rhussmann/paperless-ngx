@@ -121,22 +121,27 @@ class CollatePlugin(NoCleanupPluginMixin, NoSetupPluginMixin, ConsumeTaskPlugin)
                     )
 
                     if self.input_doc.source == DocumentSource.ApiUpload:
-                        new_file = settings.CONSUMPTION_DIR / f"{old_file.stem}-collated.pdf"
+                        new_file = pdf_file
+                    else:
+                        # If the user didn't create the subdirs yet, do it for them
+                        new_file.parent.mkdir(parents=True, exist_ok=True)
 
-                    # If the user didn't create the subdirs yet, do it for them
-                    new_file.parent.mkdir(parents=True, exist_ok=True)
                     pdf1.save(new_file)
                 logger.info("Collated documents into new file %s", new_file)
-                raise StopConsumeTaskError(
-                    "Success. Even numbered pages of double sided scan collated "
-                    "with odd pages",
-                )
+                if self.input_doc.source == DocumentSource.ApiUpload:
+                    logger.info("Collated documents via API")
+                else:
+                    raise StopConsumeTaskError(
+                        "Success. Even numbered pages of double sided scan collated "
+                        "with odd pages",
+                    )
             finally:
                 # Delete staging and recently uploaded file no matter what.
                 # If any error occurs, the user needs to be able to restart
                 # the process from scratch; after all, the staging file
                 # with the odd numbered pages might be the culprit
-                pdf_file.unlink()
+                if self.input_doc.source != DocumentSource.ApiUpload:
+                    pdf_file.unlink()
                 staging.unlink()
 
         else:
