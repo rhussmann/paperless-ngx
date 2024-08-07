@@ -32,13 +32,10 @@ class CollatePlugin(NoCleanupPluginMixin, NoSetupPluginMixin, ConsumeTaskPlugin)
 
     @property
     def able_to_run(self) -> bool:
-        return (
-            settings.CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED
-            and (
-                settings.CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME
-                 in self.input_doc.original_file.parts
-                or self.metadata.double_sided
-            )
+        return settings.CONSUMER_ENABLE_COLLATE_DOUBLE_SIDED and (
+            settings.CONSUMER_COLLATE_DOUBLE_SIDED_SUBDIR_NAME
+            in self.input_doc.original_file.parts
+            or self.metadata.double_sided
         )
 
     def run(self) -> Optional[str]:
