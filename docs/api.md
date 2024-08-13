@@ -324,6 +324,10 @@ The endpoint supports the following optional form fields:
 - `archive_serial_number`: An optional archive serial number to set.
 - `custom_fields`: An array of custom field ids to assign (with an empty
   value) to the document.
+- `double_sided`: Specify if the document should be considered as part
+  of a [double-sided](advanced_usage.md#collate) scan (note:
+  double-sided document collation [must be enabled](configuration.md#collate)
+  for this to parameter to be supported.)
 
 The endpoint will immediately return HTTP 200 if the document consumption
 process was started successfully, with the UUID of the consumption task

@@ -576,6 +576,8 @@ for more information.
     If your scanner supports double-sided scanning natively, you do not need this feature.
 
 This feature is turned off by default, see [configuration](configuration.md#collate) on how to turn it on.
+This feature must also be turned on to enable the `double_sided` parameter of the
+[POSTing Documents](api.md#file-uploads).
 
 ### Summary
 
